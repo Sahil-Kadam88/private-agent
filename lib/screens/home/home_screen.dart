@@ -8,7 +8,8 @@ import '../../services/screen_automation_service.dart';
 import '../../services/settings_service.dart';
 import '../../services/task_executor.dart';
 import '../../services/voice_service.dart';
-import '../../theme/app_theme.dart';
+import '../../theme/app_colors.dart';
+import '../../widgets/app_logo.dart';
 import '../../widgets/chat_bubble.dart';
 import '../../widgets/status_chip.dart';
 import '../history/task_history_screen.dart';
@@ -166,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       appBar: AppBar(
         title: Row(
           children: [
-            Image.asset('assets/icon/genie_logo.png', width: 30, height: 30),
+            const AppLogo(size: 30),
             const SizedBox(width: 10),
             const Text('PrivateAgent'),
             const SizedBox(width: 10),
@@ -230,11 +231,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 children: [
                   Row(
                     children: [
-                      Image.asset(
-                        'assets/icon/genie_logo.png',
-                        width: 26,
-                        height: 26,
-                      ),
+                      const AppLogo(size: 26),
                       const SizedBox(width: 10),
                       Text(
                         'PrivateAgent',
@@ -327,8 +324,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Widget _sessionTile(ThemeData theme, TaskHistoryEntry entry) {
     final (icon, color) = switch (entry.status) {
-      TaskStatus.success => (Icons.check_circle_outline, Colors.green),
-      TaskStatus.failed => (Icons.error_outline, AppTheme.danger),
+      TaskStatus.success => (Icons.check_circle_outline, AppColors.success),
+      TaskStatus.failed => (Icons.error_outline, AppColors.error),
       TaskStatus.cancelled => (
         Icons.stop_circle_outlined,
         theme.colorScheme.onSurfaceVariant,
@@ -367,12 +364,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Widget _serviceWarning(ThemeData theme) {
     return Material(
-      color: AppTheme.danger.withValues(alpha: 0.12),
+      color: AppColors.accentLight,
       child: ListTile(
         dense: true,
         leading: const Icon(
           Icons.warning_amber_rounded,
-          color: AppTheme.danger,
+          color: AppColors.error,
         ),
         title: const Text(
           'Accessibility service is off',
@@ -391,14 +388,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final maxSteps = SettingsService.instance.maxSteps;
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 10, 8, 10),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withValues(alpha: 0.08),
-        border: Border(
-          bottom: BorderSide(
-            color: theme.colorScheme.outline.withValues(alpha: 0.4),
-          ),
-        ),
-      ),
+      // Black secondary surface (30%) with white text and red progress.
+      decoration: const BoxDecoration(color: AppColors.surfaceDark),
       child: Row(
         children: [
           SizedBox(
@@ -409,6 +400,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               children: [
                 CircularProgressIndicator(
                   strokeWidth: 3,
+                  color: AppColors.accent,
                   value: maxSteps == 0 ? null : _executor.step / maxSteps,
                 ),
                 Text(
@@ -416,6 +408,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
+                    color: AppColors.textOnDark,
                   ),
                 ),
               ],
@@ -431,6 +424,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
+                    color: AppColors.textOnDark,
                   ),
                 ),
                 Text(
@@ -438,7 +432,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: AppColors.textMutedDark,
                   ),
                 ),
               ],
@@ -450,13 +444,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               _executor.isPaused
                   ? Icons.play_arrow_rounded
                   : Icons.pause_rounded,
+              color: AppColors.textOnDark,
             ),
             onPressed: () =>
                 _executor.isPaused ? _executor.resume() : _executor.pause(),
           ),
           IconButton(
             tooltip: 'Cancel task',
-            icon: const Icon(Icons.stop_rounded, color: AppTheme.danger),
+            icon: const Icon(Icons.stop_rounded, color: AppColors.error),
             onPressed: _executor.cancel,
           ),
         ],
@@ -544,7 +539,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               tooltip: 'Voice input',
               onPressed: _busy ? null : _toggleListening,
               icon: Icon(_listening ? Icons.mic : Icons.mic_none),
-              color: _listening ? AppTheme.danger : null,
+              color: _listening ? AppColors.accent : null,
             ),
             const SizedBox(width: 4),
             IconButton.filled(

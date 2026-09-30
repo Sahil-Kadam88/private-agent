@@ -4,7 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../services/screen_automation_service.dart';
 import '../../services/settings_service.dart';
-import '../../theme/app_theme.dart';
+import '../../theme/app_colors.dart';
 
 /// Multi-page first-run guide: welcome, accessibility setup, AI provider
 /// setup and runtime permissions.
@@ -241,7 +241,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       ? Icons.check_circle
                       : Icons.radio_button_unchecked,
                   color:
-                      _serviceEnabled ? AppTheme.success : AppTheme.danger,
+                      _serviceEnabled ? AppColors.success : AppColors.error,
                 ),
                 const SizedBox(width: 12),
                 Expanded(

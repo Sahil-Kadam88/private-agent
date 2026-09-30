@@ -4,6 +4,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../models/task_history_entry.dart';
 import '../../services/task_executor.dart';
+import '../../theme/app_colors.dart';
 import '../../widgets/status_chip.dart';
 
 /// Detailed list of past tasks with status, step counts and full logs.
@@ -108,10 +109,10 @@ class _TaskHistoryScreenState extends State<TaskHistoryScreen> {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: Colors.red.withValues(alpha: 0.2),
+          color: AppColors.error.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Icon(Icons.delete_outline, color: Colors.red),
+        child: const Icon(Icons.delete_outline, color: AppColors.error),
       ),
       onDismissed: (_) => _executor.deleteHistoryEntry(entry.id),
       child: Card(

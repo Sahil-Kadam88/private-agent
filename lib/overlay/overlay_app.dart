@@ -7,6 +7,7 @@ import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
+import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 
 /// Root widget of the overlay engine (runs in its own isolate, see
@@ -148,16 +149,13 @@ class _OverlayAppState extends State<OverlayApp> {
           height: 72,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [AppTheme.indigoLight, AppTheme.indigo],
-            ),
+            // Solid black bubble (30% secondary); red spinner marks activity.
+            color: AppColors.surfaceDark,
             border: Border.all(color: Colors.white24, width: 1.5),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.indigo.withValues(alpha: 0.5),
-                blurRadius: 18,
+                color: Colors.black.withValues(alpha: 0.45),
+                blurRadius: 14,
                 spreadRadius: 1,
               ),
             ],
@@ -175,7 +173,7 @@ class _OverlayAppState extends State<OverlayApp> {
                     height: 14,
                     child: CircularProgressIndicator(
                       strokeWidth: 2.4,
-                      color: Colors.white,
+                      color: AppColors.accent,
                     ),
                   ),
                 ),
@@ -196,7 +194,7 @@ class _OverlayAppState extends State<OverlayApp> {
             width: double.infinity,
             height: double.infinity,
             decoration: BoxDecoration(
-              color: AppTheme.slate900.withValues(alpha: 0.72),
+              color: AppColors.surfaceDark.withValues(alpha: 0.88),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: Colors.white12),
             ),
@@ -220,7 +218,7 @@ class _OverlayAppState extends State<OverlayApp> {
       padding: const EdgeInsets.fromLTRB(14, 10, 6, 6),
       child: Row(
         children: [
-          const Icon(Icons.smart_toy, size: 18, color: AppTheme.indigoLight),
+          const Icon(Icons.smart_toy, size: 18, color: AppColors.accent),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -260,7 +258,7 @@ class _OverlayAppState extends State<OverlayApp> {
               visualDensity: VisualDensity.compact,
               tooltip: 'Cancel',
               icon: const Icon(Icons.stop_rounded,
-                  color: Colors.redAccent, size: 20),
+                  color: AppColors.error, size: 20),
               onPressed: () => _sendCommand({'command': 'cancel'}),
             ),
           ],
@@ -305,9 +303,11 @@ class _OverlayAppState extends State<OverlayApp> {
             constraints: const BoxConstraints(maxWidth: 260),
             decoration: BoxDecoration(
               color: isUser
-                  ? AppTheme.indigo
+                  // Inverse of the main app's black user bubble: white on
+                  // the dark panel, with black text.
+                  ? Colors.white
                   : isError
-                      ? AppTheme.danger.withValues(alpha: 0.25)
+                      ? AppColors.error.withValues(alpha: 0.25)
                       : Colors.white.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -318,13 +318,15 @@ class _OverlayAppState extends State<OverlayApp> {
                 if (m['step'] != null)
                   Text('step ${m['step']}',
                       style: const TextStyle(
-                          color: AppTheme.indigoLight,
+                          color: AppColors.accent,
                           fontSize: 9,
                           fontWeight: FontWeight.w700)),
                 Text(
                   text,
-                  style: const TextStyle(
-                      color: Colors.white, fontSize: 11.5, height: 1.35),
+                  style: TextStyle(
+                      color: isUser ? Colors.black : Colors.white,
+                      fontSize: 11.5,
+                      height: 1.35),
                 ),
               ],
             ),
@@ -369,7 +371,7 @@ class _OverlayAppState extends State<OverlayApp> {
             onPressed: _busy ? null : _toggleVoice,
             icon: Icon(
               _listening ? Icons.mic : Icons.mic_none,
-              color: _listening ? Colors.redAccent : Colors.white70,
+              color: _listening ? AppColors.accent : Colors.white70,
               size: 19,
             ),
           ),
@@ -379,7 +381,7 @@ class _OverlayAppState extends State<OverlayApp> {
             onPressed:
                 _busy ? null : () => _submit(_inputController.text),
             icon: const Icon(Icons.send_rounded,
-                color: AppTheme.indigoLight, size: 19),
+                color: AppColors.accent, size: 19),
           ),
         ],
       ),

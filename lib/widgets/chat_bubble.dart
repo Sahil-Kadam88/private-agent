@@ -3,9 +3,13 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:intl/intl.dart';
 
 import '../models/chat_message.dart';
-import '../theme/app_theme.dart';
+import '../theme/app_colors.dart';
 
 /// Transcript bubble for user / agent / system / error messages.
+///
+/// Follows the 60-30-10 hierarchy: user messages are high-contrast black
+/// (30% secondary), agent messages sit on quiet light surfaces (60%),
+/// and the red accent marks step/error indicators (10%).
 class ChatBubble extends StatelessWidget {
   final ChatMessage message;
   const ChatBubble({super.key, required this.message});
@@ -20,11 +24,12 @@ class ChatBubble extends StatelessWidget {
         return _bubble(
           context,
           alignment: Alignment.centerRight,
-          color: theme.colorScheme.primary,
-          textColor: theme.colorScheme.onPrimary,
+          color: theme.colorScheme.secondary,
+          textColor: theme.colorScheme.onSecondary,
           child: Text(
             message.text,
-            style: TextStyle(color: theme.colorScheme.onPrimary, height: 1.35),
+            style:
+                TextStyle(color: theme.colorScheme.onSecondary, height: 1.35),
           ),
           time: time,
         );
@@ -75,13 +80,13 @@ class ChatBubble extends StatelessWidget {
         return _bubble(
           context,
           alignment: Alignment.centerLeft,
-          color: AppTheme.danger.withValues(alpha: 0.15),
+          color: AppColors.error.withValues(alpha: 0.15),
           textColor: theme.colorScheme.onSurface,
-          header: _stepChip(context, 'Error', color: AppTheme.danger),
+          header: _stepChip(context, 'Error', color: AppColors.error),
           child: Text(
             message.text,
             style: theme.textTheme.bodyMedium
-                ?.copyWith(color: AppTheme.danger, height: 1.35),
+                ?.copyWith(color: AppColors.error, height: 1.35),
           ),
           time: time,
         );
@@ -89,6 +94,7 @@ class ChatBubble extends StatelessWidget {
   }
 
   Widget _stepChip(BuildContext context, String label, {Color? color}) {
+    // Step indicators use the accent (primary) when no explicit color is set.
     final c = color ?? Theme.of(context).colorScheme.primary;
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
@@ -99,8 +105,7 @@ class ChatBubble extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
-            fontSize: 11, fontWeight: FontWeight.w700, color: c),
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: c),
       ),
     );
   }

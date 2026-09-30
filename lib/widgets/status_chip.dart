@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/task_history_entry.dart';
-import '../theme/app_theme.dart';
+import '../theme/app_colors.dart';
 
 /// Small colored pill used for task status and connection states.
 class StatusChip extends StatelessWidget {
@@ -21,19 +21,19 @@ class StatusChip extends StatelessWidget {
       TaskStatus.success => StatusChip(
           key: key,
           label: 'Success',
-          color: AppTheme.success,
+          color: AppColors.success,
           icon: Icons.check_circle_outline,
         ),
       TaskStatus.failed => StatusChip(
           key: key,
           label: 'Failed',
-          color: AppTheme.danger,
+          color: AppColors.error,
           icon: Icons.error_outline,
         ),
       TaskStatus.cancelled => StatusChip(
           key: key,
           label: 'Cancelled',
-          color: AppTheme.warning,
+          color: AppColors.warning,
           icon: Icons.stop_circle_outlined,
         ),
     };
@@ -76,7 +76,7 @@ class ServiceStatusDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = enabled ? AppTheme.success : AppTheme.danger;
+    final color = enabled ? AppColors.success : AppColors.error;
     return Container(
       width: 10,
       height: 10,

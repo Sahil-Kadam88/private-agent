@@ -1,128 +1,307 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-/// PrivateAgent design system — a premium "Slate" deep theme with indigo
-/// accents, in both dark and light variants.
+import 'app_colors.dart';
+import 'app_spacing.dart';
+
+/// PrivateAgent design system — the 60-30-10 "white / black / red" theme.
+///
+/// * 60% white / very light backgrounds
+/// * 30% black surfaces and typography (app bar, task bar, chat bubbles)
+/// * 10% red accent, reserved for CTAs, active/selected states,
+///   progress indicators and error states
+///
+/// Both light and dark variants keep this hierarchy: the light theme is the
+/// primary experience; the dark theme maps "background" to `#111111` and
+/// keeps red as the accent.
 class AppTheme {
   AppTheme._();
 
-  // Slate palette
-  static const slate50 = Color(0xFFF8FAFC);
-  static const slate100 = Color(0xFFF1F5F9);
-  static const slate200 = Color(0xFFE2E8F0);
-  static const slate300 = Color(0xFFCBD5E1);
-  static const slate400 = Color(0xFF94A3B8);
-  static const slate500 = Color(0xFF64748B);
-  static const slate600 = Color(0xFF475569);
-  static const slate700 = Color(0xFF334155);
-  static const slate800 = Color(0xFF1E293B);
-  static const slate900 = Color(0xFF0F172A);
-  static const slate950 = Color(0xFF020617);
+  static ThemeData light() => _build(Brightness.light);
 
-  // Brand accents
-  static const indigo = Color(0xFF6366F1);
-  static const indigoLight = Color(0xFF818CF8);
-  static const success = Color(0xFF22C55E);
-  static const danger = Color(0xFFEF4444);
-  static const warning = Color(0xFFF59E0B);
+  static ThemeData dark() => _build(Brightness.dark);
 
-  static ThemeData dark() {
-    final scheme = ColorScheme.fromSeed(
-      seedColor: indigo,
-      brightness: Brightness.dark,
-      surface: slate900,
-    ).copyWith(
-      primary: indigoLight,
-      onPrimary: slate950,
-      surface: slate900,
-      surfaceContainerHighest: slate800,
-      onSurface: slate100,
-      onSurfaceVariant: slate400,
-      outline: slate700,
+  // --------------------------------------------------------------------------
+
+  static ColorScheme _colorScheme({required bool isDark}) {
+    final base = ColorScheme.fromSeed(
+      seedColor: AppColors.accent,
+      brightness: isDark ? Brightness.dark : Brightness.light,
     );
-    return _base(scheme).copyWith(
-      scaffoldBackgroundColor: slate950,
-      cardColor: slate900,
+
+    if (!isDark) {
+      return base.copyWith(
+        // Accent drives CTAs, active states, progress.
+        primary: AppColors.accent,
+        onPrimary: AppColors.textOnDark,
+        primaryContainer: AppColors.accentLight,
+        onPrimaryContainer: AppColors.accentPressed,
+        // Secondary = black (user chat bubbles, tonal contrast).
+        secondary: AppColors.secondary,
+        onSecondary: AppColors.textOnDark,
+        secondaryContainer: AppColors.surfaceMutedHigh,
+        onSecondaryContainer: AppColors.textPrimary,
+        tertiary: AppColors.secondary,
+        onTertiary: AppColors.textOnDark,
+        error: AppColors.error,
+        onError: AppColors.textOnDark,
+        errorContainer: AppColors.accentLight,
+        onErrorContainer: AppColors.accentPressed,
+        // 60%: white / very light surfaces.
+        surface: AppColors.background,
+        onSurface: AppColors.textPrimary,
+        onSurfaceVariant: AppColors.textMuted,
+        outline: AppColors.border,
+        outlineVariant: const Color(0xFFEAEAEA),
+        surfaceDim: const Color(0xFFE8E8E8),
+        surfaceContainerLowest: AppColors.background,
+        surfaceContainerLow: const Color(0xFFFAFAFA),
+        surfaceContainer: const Color(0xFFF7F7F7),
+        surfaceContainerHigh: AppColors.surfaceMuted,
+        surfaceContainerHighest: AppColors.surfaceMutedHigh,
+        inverseSurface: AppColors.surfaceDark,
+        onInverseSurface: AppColors.textOnDark,
+        shadow: AppColors.secondary,
+      );
+    }
+
+    return base.copyWith(
+      primary: AppColors.accent,
+      onPrimary: AppColors.textOnDark,
+      primaryContainer: AppColors.accentPressed,
+      onPrimaryContainer: AppColors.accentLight,
+      secondary: AppColors.textOnDark,
+      onSecondary: AppColors.secondary,
+      secondaryContainer: AppColors.surfaceDarkVariant,
+      onSecondaryContainer: AppColors.textOnDark,
+      tertiary: AppColors.textOnDark,
+      onTertiary: AppColors.secondary,
+      error: AppColors.error,
+      onError: AppColors.textOnDark,
+      errorContainer: AppColors.accentPressed,
+      onErrorContainer: AppColors.accentLight,
+      surface: AppColors.surfaceDark,
+      onSurface: AppColors.textOnDark,
+      onSurfaceVariant: AppColors.textMutedDark,
+      outline: AppColors.borderDark,
+      outlineVariant: const Color(0xFF242424),
+      surfaceDim: const Color(0xFF0A0A0A),
+      surfaceContainerLowest: const Color(0xFF0C0C0C),
+      surfaceContainerLow: const Color(0xFF161616),
+      surfaceContainer: AppColors.surfaceDarkVariant,
+      surfaceContainerHigh: const Color(0xFF222222),
+      surfaceContainerHighest: const Color(0xFF2A2A2A),
+      inverseSurface: const Color(0xFFEDEDED),
+      onInverseSurface: AppColors.textPrimary,
+      shadow: Colors.black,
     );
   }
 
-  static ThemeData light() {
-    final scheme = ColorScheme.fromSeed(
-      seedColor: indigo,
-      brightness: Brightness.light,
-      surface: slate50,
-    ).copyWith(
-      primary: const Color(0xFF4F46E5),
-      surface: slate50,
-      surfaceContainerHighest: Colors.white,
-      onSurface: slate900,
-      onSurfaceVariant: slate600,
-      outline: slate300,
-    );
-    return _base(scheme).copyWith(
-      scaffoldBackgroundColor: slate50,
-      cardColor: Colors.white,
-    );
-  }
+  // --------------------------------------------------------------------------
 
-  static ThemeData _base(ColorScheme scheme) {
+  static ThemeData _build(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    final scheme = _colorScheme(isDark: isDark);
+    final border = isDark ? AppColors.borderDark : AppColors.border;
+    final onDark = AppColors.textOnDark;
+    final onLight = AppColors.secondary;
+
     return ThemeData(
       useMaterial3: true,
+      brightness: brightness,
       colorScheme: scheme,
+      scaffoldBackgroundColor:
+          isDark ? AppColors.surfaceDark : AppColors.background,
+
+      // Black navigation surface (30%) with white content.
       appBarTheme: AppBarTheme(
         centerTitle: false,
         elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: scheme.onSurface,
+        backgroundColor: AppColors.secondary,
+        foregroundColor: onDark,
+        iconTheme: IconThemeData(color: onDark),
+        actionsIconTheme: IconThemeData(color: onDark),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         titleTextStyle: TextStyle(
-          color: scheme.onSurface,
+          color: onDark,
           fontSize: 20,
           fontWeight: FontWeight.w700,
           letterSpacing: -0.3,
         ),
       ),
+
       cardTheme: CardThemeData(
         elevation: 0,
         margin: EdgeInsets.zero,
+        color: isDark ? AppColors.surfaceDarkVariant : AppColors.background,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: scheme.outline.withValues(alpha: 0.4)),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          side: BorderSide(color: border),
         ),
       ),
+
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: scheme.surfaceContainerHighest,
+        fillColor:
+            isDark ? AppColors.surfaceDarkVariant : AppColors.background,
+        hintStyle: TextStyle(
+          color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+        ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: scheme.outline.withValues(alpha: 0.5)),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          borderSide: BorderSide(color: border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: scheme.primary, width: 1.6),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          borderSide: const BorderSide(color: AppColors.accent, width: 1.6),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
+
+      // Primary CTA = accent red.
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          backgroundColor: AppColors.accent,
+          foregroundColor: onDark,
+          disabledBackgroundColor:
+              isDark ? const Color(0xFF4A1D1F) : const Color(0xFFF3BDBF),
+          disabledForegroundColor: onDark.withValues(alpha: 0.75),
+          textStyle: const TextStyle(fontWeight: FontWeight.w700),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          ),
         ),
       ),
-      chipTheme: ChipThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        side: BorderSide(color: scheme.outline.withValues(alpha: 0.5)),
+
+      // Passive text actions stay black/white — accent is not spent here.
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: isDark ? onDark : onLight,
+          textStyle: const TextStyle(fontWeight: FontWeight.w600),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          ),
+        ),
       ),
+
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: isDark ? onDark : onLight,
+          side: BorderSide(
+            color: isDark ? AppColors.textMutedDark : AppColors.secondary,
+            width: 1.2,
+          ),
+          textStyle: const TextStyle(fontWeight: FontWeight.w600),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          ),
+        ),
+      ),
+
+      // Selected segment = accent; unselected = quiet surface.
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? AppColors.accent
+                : null,
+          ),
+          foregroundColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? onDark
+                : (isDark ? onDark : onLight),
+          ),
+          side: WidgetStateProperty.resolveWith(
+            (states) => BorderSide(
+              color: states.contains(WidgetState.selected)
+                  ? AppColors.accent
+                  : border,
+            ),
+          ),
+          textStyle: WidgetStateProperty.all(
+            const TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ),
+      ),
+
+      // Choice chips (provider selection): selected = accent.
+      chipTheme: ChipThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+        ),
+        side: BorderSide(color: border),
+        backgroundColor:
+            isDark ? AppColors.surfaceDarkVariant : AppColors.background,
+        labelStyle: TextStyle(
+          color: isDark ? onDark : onLight,
+          fontWeight: FontWeight.w600,
+        ),
+        selectedColor: AppColors.accent,
+        secondaryLabelStyle: const TextStyle(
+          color: AppColors.textOnDark,
+          fontWeight: FontWeight.w700,
+        ),
+        checkmarkColor: AppColors.textOnDark,
+      ),
+
+      // Switch = active state = accent.
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? AppColors.textOnDark
+              : (isDark ? AppColors.textMutedDark : AppColors.background),
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? AppColors.accent
+              : border,
+        ),
+        trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+      ),
+
+      // Slider = active state = accent.
+      sliderTheme: SliderThemeData(
+        activeTrackColor: AppColors.accent,
+        thumbColor: AppColors.accent,
+        inactiveTrackColor: border,
+        overlayColor: AppColors.accent.withValues(alpha: 0.12),
+      ),
+
+      progressIndicatorTheme:
+          const ProgressIndicatorThemeData(color: AppColors.accent),
+
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: AppColors.accent,
+        selectionColor: AppColors.accentLight,
+        selectionHandleColor: AppColors.accent,
+      ),
+
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: isDark ? AppColors.background : AppColors.surfaceDark,
+        contentTextStyle: TextStyle(
+          color: isDark ? AppColors.textPrimary : AppColors.textOnDark,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
+
+      drawerTheme: DrawerThemeData(
+        backgroundColor:
+            isDark ? AppColors.surfaceDarkVariant : AppColors.background,
+        surfaceTintColor: Colors.transparent,
+      ),
+
       dividerTheme: DividerThemeData(
-        color: scheme.outline.withValues(alpha: 0.4),
+        color: border,
         thickness: 1,
       ),
     );
