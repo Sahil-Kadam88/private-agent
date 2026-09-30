@@ -34,6 +34,11 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+            // Shrink unused Java/Kotlin code and resources (R8).
+            // Flutter plugins ship their own consumer keep rules; if a
+            // plugin needs extra rules they belong in proguard-rules.pro.
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
 }
