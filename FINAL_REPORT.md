@@ -188,10 +188,16 @@ All three splits are produced; deployment should ship **arm64-v8a** for modern d
 
 ## FINAL DELIVERABLE
 
-1. Modified source code — branch `ui-redesign-60-30-10`, commits: `baseline-analysis` → `build-fixes` → `theme-system + ui-redesign` → `logo-update` → `apk-optimization` → (`testing/release docs`).
+1. Modified source code — branch `ui-redesign-60-30-10`, commits: `baseline-analysis` → `build-fixes` → `theme-system + ui-redesign` → `logo-update` → `apk-optimization` → `release-build` → `docs` → `release` (version bump).
 2. Updated UI — 60-30-10 throughout light + dark themes.
 3. Black circle application logo — launcher (adaptive + legacy) + in-app + web.
 4. Optimized Android configuration — R8 on, unused deps removed, ABI splits produced.
 5. Tests — analyze 0 errors, 10/10 tests green (8 documented pre-existing warnings).
 6. Release APK — `build/app/outputs/flutter-apk/app-release.apk` (universal) + three ABI splits.
 7. This report.
+
+### Published
+
+- **Repository:** https://github.com/Sahil-Kadam88/private-agent (code on `main`, work also on `ui-redesign-60-30-10`)
+- **Release v1.1.0:** https://github.com/Sahil-Kadam88/private-agent/releases/tag/v1.1.0
+  with `app-release.apk` (55,231,153 B), `app-arm64-v8a-release.apk` (19,405,903 B), `app-armeabi-v7a-release.apk` (16,962,075 B), `app-x86_64-release.apk` (20,955,211 B)
