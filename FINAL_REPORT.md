@@ -153,7 +153,7 @@ All three splits are produced; deployment should ship **arm64-v8a** for modern d
 | Universal APK filename | `app-release.apk` — 55,231,153 bytes |
 | Split APKs | `app-arm64-v8a-release.apk` 19,405,903 · `app-armeabi-v7a-release.apk` 16,962,075 · `app-x86_64-release.apk` 20,955,211 |
 | Signing | **debug keystore** (project's pre-existing TODO — supply a release keystore before store distribution) |
-| Package / version | `com.privateagent.private_agent` · versionName 1.0.0 · versionCode 2001 |
+| Package / version | `com.privateagent.private_agent` · versionName **1.1.0** · versionCode 2 (tag `v1.1.0`) |
 
 ---
 
